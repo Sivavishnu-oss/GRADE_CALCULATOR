@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CGPA & GPA Calculator Pro</title>
+  <meta name="description" content="Calculate your Grade Point Average (GPA) and Cumulative Grade Point Average (CGPA) accurately with real-time feedback and customizable grading scales.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- App Header -->
+  <header class="app-header">
+    <div class="container header-content">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1 class="brand-title">CGPA Calculator</h1>
+          <p>Academic Performance & GPA Planner</p>
+        </div>
+      </div>
+
+      <div class="scale-toggle-container">
+        <button id="scale10Btn" class="scale-btn active" onclick="switchScale('10')">10.0 Scale (CGPA)</button>
+        <button id="scale4Btn" class="scale-btn" onclick="switchScale('4')">4.0 Scale (GPA)</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="container main-layout">
+    
+    <!-- Left Column: Course Input Manager -->
+    <section class="glass-card">
+      <div class="card-header">
+        <div class="card-title-group">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+          </svg>
+          <h2>Course & Credit Manager</h2>
+        </div>
+        <span id="courseCountBadge" style="font-size: 12px; color: var(--text-dim); font-weight: 600;">4 Courses</span>
+      </div>
+
+      <form id="cgpaForm" onsubmit="event.preventDefault(); calculateCGPA();">
+        <div class="course-table-header">
+          <span>Course Title</span>
+          <span>Credits</span>
+          <span>Grade</span>
+          <span>Action</span>
+        </div>
+
+        <div id="courseList" class="course-list">
+          <!-- Rows will be initialized or dynamically added via JS -->
+        </div>
+
+        <div class="action-bar">
+          <button type="button" class="btn btn-secondary" onclick="addCourseRow()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            Add Course
+          </button>
+          
+          <button type="button" class="btn btn-outline-danger" onclick="resetForm()">
+            Reset All
+          </button>
+
+          <button type="submit" class="btn btn-primary" style="margin-left: auto;">
+            Calculate CGPA
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Right Column: Live Results & Analytics -->
+    <section class="glass-card result-card">
+      <div class="card-header" style="width: 100%;">
+        <div class="card-title-group">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="20" x2="18" y2="10"></line>
+            <line x1="12" y1="20" x2="12" y2="4"></line>
+            <line x1="6" y1="20" x2="6" y2="14"></line>
+          </svg>
+          <h2>Performance Summary</h2>
+        </div>
+      </div>
+
+      <!-- Score Ring Gauge -->
+      <div class="score-ring-wrapper">
+        <svg class="score-svg" viewBox="0 0 180 180">
+          <defs>
+            <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#6366f1" />
+              <stop offset="50%" stop-color="#8b5cf6" />
+              <stop offset="100%" stop-color="#14b8a6" />
+            </linearGradient>
+          </defs>
+          <circle class="circle-bg" cx="90" cy="90" r="80" />
+          <circle id="scoreCircle" class="circle-progress" cx="90" cy="90" r="80" />
+        </svg>
+        <div class="score-inner-text">
+          <span id="scoreVal" class="score-val">0.00</span>
+          <span id="scoreMax" class="score-max">out of 10.0</span>
+        </div>
+      </div>
+
+      <!-- Status Badge -->
+      <div id="statusBadge" class="badge-status">
+        Ready to Calculate
+      </div>
+
+      <!-- Metrics Breakdown -->
+      <div class="metrics-grid">
+        <div class="metric-item">
+          <div class="metric-label">Total Credits</div>
+          <div id="totalCreditsVal" class="metric-value">0</div>
+        </div>
+        <div class="metric-item">
+          <div class="metric-label">Grade Points</div>
+          <div id="totalPointsVal" class="metric-value">0.0</div>
+        </div>
+        <div class="metric-item">
+          <div class="metric-label">Percentage</div>
+          <div id="percentageVal" class="metric-value">0%</div>
+        </div>
+      </div>
+
+      <!-- Target CGPA Planner -->
+      <div class="target-planner">
+        <h4>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <circle cx="12" cy="12" r="6"></circle>
+            <circle cx="12" cy="12" r="2"></circle>
+          </svg>
+          Target CGPA Planner
+        </h4>
+        <div class="planner-inputs">
+          <div>
+            <label style="font-size: 11px; color: var(--text-dim); display: block; margin-bottom: 4px;">Target CGPA</label>
+            <input type="number" id="targetCgpaInput" class="input-control" placeholder="e.g. 9.0" step="0.1" min="0" max="10" oninput="calculateTargetRequired()">
+          </div>
+          <div>
+            <label style="font-size: 11px; color: var(--text-dim); display: block; margin-bottom: 4px;">Remaining Credits</label>
+            <input type="number" id="remainingCreditsInput" class="input-control" placeholder="e.g. 20" min="1" oninput="calculateTargetRequired()">
+          </div>
+        </div>
+        <div id="plannerResult" class="planner-result">
+          Enter target CGPA & remaining credits to calculate required GPA.
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Grade Reference Table Container -->
+  <div class="container reference-section">
+    <section class="glass-card">
+      <div class="card-header">
+        <div class="card-title-group">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+          <h2>Grade Scale Reference</h2>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="scale-table">
+          <thead>
+            <tr>
+              <th>Letter Grade</th>
+              <th>Grade Point (10.0 Scale)</th>
+              <th>Grade Point (4.0 Scale)</th>
+              <th>Percentage Equivalent</th>
+              <th>Performance Level</th>
+            </tr>
+          </thead>
+          <tbody id="scaleTableBody">
+            <!-- Table dynamically populated based on current scale -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <!-- Footer -->
+  <footer class="app-footer container">
+    <p>&copy; 2026 CGPA & GPA Calculator Pro &bull; Built with standard HTML & CSS</p>
+  </footer>
+
+  <!-- Script Logic -->
+  <script src="script.js"></script>
+</body>
+</html>
