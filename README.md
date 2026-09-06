@@ -1,4 +1,4 @@
-# CGPA & GPA Calculator Pro 🎓
+## CGPA & GPA Calculator Pro 🎓
 
 A modern, responsive, and feature-rich **CGPA & GPA Calculator** web application built using standard **HTML, CSS, and JavaScript**. Designed with an aesthetic dark glassmorphism interface, real-time calculation meters, dynamic credit weighting, dual scale toggles, and target performance planning.
 Website Link ----->  https://sivavishnu-oss.github.io/GRADE_CALCULATOR/
